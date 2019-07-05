@@ -121,32 +121,32 @@ enum class TimeUnits {
     SECOND,
     MINUTE,
     HOUR,
-    DAY,
-}
+    DAY;
 
-fun TimeUnits.plural(count: Int): String {
-    val loCount: Int = (count% 10).toInt()
+    fun plural(count: Int): String {
+        val loCount: Int = (count% 10).toInt()
 
-    val suffix = when (loCount) {
-        1 -> when (this) {
-            TimeUnits.SECOND -> "секунду"
-            TimeUnits.MINUTE -> "минуту"
-            TimeUnits.HOUR -> "час"
-            TimeUnits.DAY -> "день"
+        val suffix = when (loCount) {
+            1 -> when (this) {
+                SECOND -> "секунду"
+                MINUTE -> "минуту"
+                HOUR -> "час"
+                DAY -> "день"
+            }
+            2, 3, 4 -> when (this) {
+                SECOND -> "секунды"
+                MINUTE -> "минуты"
+                HOUR -> "часа"
+                DAY -> "дня"
+            }
+            else -> when (this) {
+                SECOND -> "секунд"
+                MINUTE -> "минут"
+                HOUR -> "часов"
+                DAY -> "дней"
+            }
         }
-        2, 3, 4 -> when (this) {
-            TimeUnits.SECOND -> "секунды"
-            TimeUnits.MINUTE -> "минуты"
-            TimeUnits.HOUR -> "часа"
-            TimeUnits.DAY -> "дня"
-        }
-        else -> when (this) {
-            TimeUnits.SECOND -> "секунд"
-            TimeUnits.MINUTE -> "минут"
-            TimeUnits.HOUR -> "часов"
-            TimeUnits.DAY -> "дней"
-        }
+
+        return "$count $suffix"
     }
-
-    return "$count $suffix"
 }
