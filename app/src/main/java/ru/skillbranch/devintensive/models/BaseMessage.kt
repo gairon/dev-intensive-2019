@@ -14,7 +14,7 @@ abstract class BaseMessage(
     companion object AbstractFactory {
         var nextId = 0;
 
-        fun makeMessage(fromUser: User, fromChat: Chat, date: Date = Date(), payload: String, type: String, isIncoming: Boolean = false): BaseMessage {
+        fun makeMessage(fromUser: User, fromChat: Chat, date: Date = Date(), type: String, payload: String, isIncoming: Boolean = false): BaseMessage {
             val nextIdStr = "${nextId++}";
             return when (type) {
                 "text" -> TextMessage(nextIdStr, fromUser, fromChat, isIncoming, date, payload)
