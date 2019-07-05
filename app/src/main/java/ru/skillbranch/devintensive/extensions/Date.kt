@@ -1,5 +1,6 @@
 package ru.skillbranch.devintensive.extensions
 
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,53 +26,92 @@ fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
 }
 
 fun Date.humanizeDiff(date: Date = Date()): String {
-//    0с - 1с "только что"
-//    1с - 45с "несколько секунд назад"
-//    45с - 75с "минуту назад"
-//    75с - 45мин "N минут назад"
-//    45мин - 75мин "час назад"
-//    75мин 22ч "N часов назад"
-//    22ч - 26ч "день назад"
-//    26ч - 360д "N дней назад"
-//    >360д "более года назад"
-
     val diff: Long = date.time - this.time;
-    println("$this, $date, $diff")
-    val result = when {
-        diff <= 1 * SECOND -> "только что"
-        diff <= 45 * SECOND -> "несколько секунд назад"
-        diff <= 75 * SECOND -> "минуту назад"
-        diff > 75 * SECOND && diff <= 45 * MINUTE -> {
-            val minutes: Long = diff / MINUTE;
-            val loMin: Int = (minutes % 10).toInt()
-            val units = when(loMin) {
-                2, 3, 4 -> "минуты"
-                else -> "минут"
+    val negativeDiff: Long = this.time - date.time;
+
+    val result: String;
+    if (diff >= 0) {
+        result = when {
+            diff <= 1 * SECOND -> "только что"
+            diff <= 45 * SECOND -> "несколько секунд назад"
+            diff <= 75 * SECOND -> "минуту назад"
+            diff > 75 * SECOND && diff <= 45 * MINUTE -> {
+                val minutes: Long = diff / MINUTE;
+                val loMin: Int = (minutes % 10).toInt()
+                val units = when (loMin) {
+                    2, 3, 4 -> "минуты"
+                    else -> "минут"
+                }
+
+                "$minutes $units назад"
             }
-            return "$minutes $units назад"
-        }
-        diff > 45 * MINUTE && diff <= 75 * MINUTE -> "час назад"
-        diff > 75 * MINUTE && diff <= 22 * HOUR -> {
-            val hours: Long = diff / HOUR;
-            val loHours: Int = (hours % 10).toInt()
-            val units = when(loHours) {
-                2, 3, 4 -> "часа"
-                else -> "часов"
+            diff > 45 * MINUTE && diff <= 75 * MINUTE -> "час назад"
+            diff > 75 * MINUTE && diff <= 22 * HOUR -> {
+                val hours: Long = diff / HOUR;
+                val loHours: Int = (hours % 10).toInt()
+                val units = when (loHours) {
+                    2, 3, 4 -> "часа"
+                    else -> "часов"
+                }
+
+                "$hours $units назад"
             }
-            return "$hours $units назад"
-        }
-        diff > 22 * HOUR && diff <= 26 * HOUR -> "день назад"
-        diff > 26 * HOUR && diff <= 360 * DAY -> {
-            val days: Long = diff / DAY;
-            val loDays: Int = (days % 10).toInt()
-            val units = when(loDays) {
-                2, 3, 4 -> "дня"
-                else -> "дней"
+            diff > 22 * HOUR && diff <= 26 * HOUR -> "день назад"
+            diff > 26 * HOUR && diff <= 360 * DAY -> {
+                val days: Long = diff / DAY;
+                val loDays: Int = (days % 10).toInt()
+                val units = when (loDays) {
+                    2, 3, 4 -> "дня"
+                    else -> "дней"
+                }
+
+                "$days $units назад"
             }
-            return "$days $units назад"
+            else -> "более года назад"
         }
-        else -> "более года назад"
+    } else {
+        result = when {
+            negativeDiff <= 1 * SECOND -> "только что"
+            negativeDiff <= 45 * SECOND -> "через несколько секунд"
+            negativeDiff <= 75 * SECOND -> "через минуту"
+            negativeDiff > 75 * SECOND && negativeDiff <= 45 * MINUTE -> {
+                val minutes: Long = negativeDiff / MINUTE;
+                val loMin: Int = (minutes % 10).toInt()
+                val units = when (loMin) {
+                    2, 3, 4 -> "минуты"
+                    else -> "минут"
+                }
+
+                "через $minutes $units"
+            }
+            negativeDiff > 45 * MINUTE && negativeDiff <= 75 * MINUTE -> "через час"
+            negativeDiff > 75 * MINUTE && negativeDiff <= 22 * HOUR -> {
+                val hours: Long = negativeDiff / HOUR;
+                val loHours: Int = (hours % 10).toInt()
+                val units = when (loHours) {
+                    2, 3, 4 -> "часа"
+                    else -> "часов"
+                }
+
+                "через $hours $units"
+            }
+            negativeDiff > 22 * HOUR && negativeDiff <= 26 * HOUR -> "через день"
+            negativeDiff > 26 * HOUR && negativeDiff <= 360 * DAY -> {
+                val days: Long = negativeDiff / DAY;
+                val loDays: Int = (days % 10).toInt()
+                val units = when (loDays) {
+                    2, 3, 4 -> "дня"
+                    else -> "дней"
+                }
+
+                "через $days $units"
+            }
+            negativeDiff > 360 -> "более чем через год"
+            else -> throw Exception("There is no such period")
+        }
     }
+
+    println("$this, $date, $diff, $negativeDiff, $result")
 
     return result;
 }
@@ -82,4 +122,31 @@ enum class TimeUnits {
     MINUTE,
     HOUR,
     DAY,
+}
+
+fun TimeUnits.plural(count: Int): String {
+    val loCount: Int = (count% 10).toInt()
+
+    val suffix = when (loCount) {
+        1 -> when (this) {
+            TimeUnits.SECOND -> "секунду"
+            TimeUnits.MINUTE -> "минуту"
+            TimeUnits.HOUR -> "час"
+            TimeUnits.DAY -> "день"
+        }
+        2, 3, 4 -> when (this) {
+            TimeUnits.SECOND -> "секунды"
+            TimeUnits.MINUTE -> "минуты"
+            TimeUnits.HOUR -> "часа"
+            TimeUnits.DAY -> "дня"
+        }
+        else -> when (this) {
+            TimeUnits.SECOND -> "секунд"
+            TimeUnits.MINUTE -> "минут"
+            TimeUnits.HOUR -> "часов"
+            TimeUnits.DAY -> "дней"
+        }
+    }
+
+    return "$count $suffix"
 }
