@@ -13,3 +13,13 @@ fun String.stripHtml(): String {
         .replace("&gt;", ">")
         .replace(multipleSpacecPattern, " ")
 }
+
+fun String.truncate(toLength: Int = 16): String {
+    var result = this.trimEnd()
+    if (toLength == 0 || result.length <= toLength) return result
+
+    result = this.substring(0, toLength).trimEnd()
+    result += "..."
+
+    return result
+}
