@@ -21,11 +21,11 @@ abstract class BaseMessage(
             type: String,
             payload: String,
             isIncoming: Boolean = false
-        ): String {
+        ): BaseMessage {
             val nextIdStr = "${nextId++}";
             return when (type) {
-                "text" -> TextMessage(nextIdStr, fromUser, fromChat, isIncoming, date, payload).formatMessage()
-                else -> ImageMessage(nextIdStr, fromUser, fromChat, isIncoming, date, payload).formatMessage()
+                "text" -> TextMessage(nextIdStr, fromUser, fromChat, isIncoming, date, payload)
+                else -> ImageMessage(nextIdStr, fromUser, fromChat, isIncoming, date, payload)
             }
         }
     }
