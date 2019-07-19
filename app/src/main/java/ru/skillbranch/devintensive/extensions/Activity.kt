@@ -2,6 +2,7 @@ package ru.skillbranch.devintensive.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.view.inputmethod.InputMethodManager
 
@@ -16,6 +17,9 @@ fun Activity.hideKeyboard() {
 }
 
 fun Activity.isKeyboardOpen(): Boolean {
+    val orientation = getResources().getConfiguration().orientation;
+    val landscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
+
     val rootView = window.decorView.rootView
     val visRect: Rect = Rect();
     rootView.getWindowVisibleDisplayFrame(visRect);
@@ -23,7 +27,7 @@ fun Activity.isKeyboardOpen(): Boolean {
 
     // r.bottom is the position above soft keypad or device button.
     // if keypad is shown, the r.bottom is smaller than that before.
-    val keypadHeight: Int = screenHeight - visRect.bottom;
+    val keypadHeight: Int = screenHeight - if (landscape) visRect.left else visRect.bottom;
 
     return (keypadHeight > screenHeight * 0.15);
 }

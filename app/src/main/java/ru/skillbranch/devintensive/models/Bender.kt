@@ -12,20 +12,22 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     }
 
     fun listenAnswer(answer: String): Pair<String, Triple<Int, Int, Int>> {
+        if (question == Question.IDLE) {
+            return question.question to status.color
+        }
+
         return if (question.answers.contains(answer)) {
             question = question.nextQuestion()
             "Отлично - ты справился\n" +
                     question.question to status.color
         } else {
-            status = status.nextStatus()
-
             if (status == Status.CRITICAL) {
                 status = Status.NORMAL
                 question = Question.NAME
                 "Это неправильный ответ. Давай все по новой\n" +
                         question.question to status.color
-            }
-            else {
+            } else {
+                status = status.nextStatus()
                 "Это неправильный ответ\n" +
                         question.question to status.color
             }
@@ -51,19 +53,19 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion(): Question = PROFESSION
         },
-        PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender"))  {
+        PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")) {
             override fun nextQuestion(): Question = MATERIAL
         },
-        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood"))  {
+        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")) {
             override fun nextQuestion(): Question = BDAY
         },
-        BDAY("Когда меня создали?", listOf("2993"))  {
+        BDAY("Когда меня создали?", listOf("2993")) {
             override fun nextQuestion(): Question = SERIAL
         },
-        SERIAL("Мой серийный номер?", listOf("2716057"))  {
+        SERIAL("Мой серийный номер?", listOf("2716057")) {
             override fun nextQuestion(): Question = IDLE
         },
-        IDLE("На этом все, вопросов больше нет", listOf())  {
+        IDLE("На этом все, вопросов больше нет", listOf()) {
             override fun nextQuestion(): Question = IDLE
         };
 
