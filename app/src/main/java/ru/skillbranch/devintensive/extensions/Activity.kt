@@ -27,7 +27,8 @@ fun Activity.isKeyboardOpen(): Boolean {
 
     // r.bottom is the position above soft keypad or device button.
     // if keypad is shown, the r.bottom is smaller than that before.
-    val keypadHeight: Int = screenHeight - if (landscape) visRect.left else visRect.bottom;
+    val keypadHeight: Int = screenHeight - visRect.bottom;
+//    val keypadHeight: Int = screenHeight - if (landscape) visRect.left else visRect.bottom;
 
     return (keypadHeight > screenHeight * 0.15);
 }
