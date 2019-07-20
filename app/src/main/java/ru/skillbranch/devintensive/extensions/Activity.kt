@@ -7,13 +7,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlin.math.roundToInt
 
-fun Activity.showKeyboard() {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
-}
-
 fun Activity.hideKeyboard() {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     var view = currentFocus
     if (view == null) {
         view = View(this)
@@ -31,5 +26,5 @@ fun Activity.isKeyboardOpen(): Boolean {
 }
 
 fun Activity.isKeyboardClosed(): Boolean {
-    return !isKeyboardOpen();
+    return !isKeyboardOpen()
 }

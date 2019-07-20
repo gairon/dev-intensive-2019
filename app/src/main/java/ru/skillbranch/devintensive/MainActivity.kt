@@ -50,8 +50,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, TextView.OnEdito
         messageEt.setOnEditorActionListener(this);
 
         sendBtn.setOnClickListener(this)
-
-        showKeyboard()
     }
 
     override fun onClick(v: View?) {

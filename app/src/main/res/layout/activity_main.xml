@@ -11,8 +11,7 @@
     <TextView
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
-            android:height="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:text="Hello World!"
             android:gravity="center"
             android:textSize="@dimen/font_large_24"
@@ -46,7 +45,8 @@
                 android:paddingBottom="@dimen/spacing_normal_16"
                 android:layout_marginLeft="@dimen/spacing_normal_16"
                 android:layout_marginRight="@dimen/spacing_normal_16"
-                android:imeOptions="actionDone|flagNoFullscreen"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:inputType="text"
         />
         <ImageView
