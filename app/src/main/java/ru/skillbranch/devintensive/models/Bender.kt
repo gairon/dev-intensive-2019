@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.models
 
+import androidx.core.text.isDigitsOnly
+
 class Bender(var status: Status = Status.NORMAL, var question: Question = Question.NAME) {
 
     fun askQuestion(): String = when (question) {
@@ -16,7 +18,8 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
             return question.question to status.color
         }
 
-        return if (question.answers.contains(answer)) {
+        val validationMsg: String? = question.validate(answer)
+        return if (validationMsg == null && question.answers.contains(answer.toLowerCase())) {
             question = question.nextQuestion()
             "Отлично - ты справился\n" +
                     question.question to status.color
@@ -27,9 +30,14 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
                 "Это неправильный ответ. Давай все по новой\n" +
                         question.question to status.color
             } else {
-                status = status.nextStatus()
-                "Это неправильный ответ\n" +
-                        question.question to status.color
+                if (validationMsg == null) {
+                    status = status.nextStatus()
+                    "Это неправильный ответ\n" +
+                            question.question to status.color
+                } else {
+                    "$validationMsg\n" +
+                            question.question to status.color
+                }
             }
         }
     }
@@ -52,24 +60,62 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     enum class Question(val question: String, val answers: List<String>) {
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion(): Question = PROFESSION
+            override fun validate(message: String): String? {
+                if (message.length > 0) {
+                    val firstChar: String = message[0].toString()
+                    if (firstChar != firstChar.toUpperCase()) {
+                        return "Имя должно начинаться с заглавной буквы"
+                    }
+                }
+                return null
+            }
         },
         PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")) {
             override fun nextQuestion(): Question = MATERIAL
+            override fun validate(message: String): String? {
+                if (message.length > 0) {
+                    val firstChar: String = message[0].toString()
+                    if (firstChar != firstChar.toLowerCase()) {
+                        return "Профессия должна начинаться со строчной буквы"
+                    }
+                }
+                return null
+            }
         },
         MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")) {
             override fun nextQuestion(): Question = BDAY
+            override fun validate(message: String): String? {
+                if (message.contains(Regex("\\d"))) {
+                    return "Материал не должен содержать цифр"
+                }
+                return null
+            }
         },
         BDAY("Когда меня создали?", listOf("2993")) {
             override fun nextQuestion(): Question = SERIAL
+            override fun validate(message: String): String? {
+                if (!message.isDigitsOnly()) {
+                    return "Год моего рождения должен содержать только цифры"
+                }
+                return null
+            }
         },
         SERIAL("Мой серийный номер?", listOf("2716057")) {
             override fun nextQuestion(): Question = IDLE
+            override fun validate(message: String): String? {
+                if (!message.isDigitsOnly() || message.length != 7) {
+                    return "Серийный номер содержит только цифры, и их 7"
+                }
+                return null
+            }
         },
         IDLE("На этом все, вопросов больше нет", listOf()) {
             override fun nextQuestion(): Question = IDLE
+            override fun validate(message: String): String? = null
         };
 
         abstract fun nextQuestion(): Question
+        abstract fun validate(message: String): String?
     }
 
 
