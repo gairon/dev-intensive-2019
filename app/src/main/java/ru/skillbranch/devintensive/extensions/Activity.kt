@@ -3,6 +3,7 @@ package ru.skillbranch.devintensive.extensions
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlin.math.roundToInt
 
@@ -13,7 +14,11 @@ fun Activity.showKeyboard() {
 
 fun Activity.hideKeyboard() {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    var view = currentFocus
+    if (view == null) {
+        view = View(this)
+    }
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
 fun Activity.isKeyboardOpen(): Boolean {
