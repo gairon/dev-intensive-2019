@@ -1,4 +1,4 @@
-package ru.skillbranch.devintensive.ui
+package ru.skillbranch.devintensive.ui.profile
 
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
@@ -9,8 +9,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
@@ -79,6 +77,8 @@ class ProfileActivity : AppCompatActivity() {
         btn_switch_theme.setOnClickListener{
             viewModel.switchTheme()
         }
+
+        showCurrentMode(isEditMode);
     }
 
     private fun showCurrentMode(isEditMode: Boolean) {

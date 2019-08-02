@@ -235,9 +235,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/profile_hint_about"
                 tools:text="Some thing"
-                android:maxLines="5"
-                android:lines="1"
-                style="@style/Profile.EditText.Single"
+                style="@style/Profile.EditText.MultiLine"
                 app:counterEnabled="false"
                 app:counterMaxLength="128"
                 android:id="@+id/et_about"/>
