@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.Context
+
 val TransliterationMap: Map<String, String> = mapOf(
     "а" to "a",
     "б" to "b",
@@ -41,7 +43,7 @@ val TransliterationMap: Map<String, String> = mapOf(
     "Д" to "D",
     "Е" to "E",
     "Ё" to "E",
-    "Ж" to "ZH",
+    "Ж" to "Zh",
     "З" to "Z",
     "И" to "I",
     "Й" to "I",
@@ -58,15 +60,15 @@ val TransliterationMap: Map<String, String> = mapOf(
     "Ф" to "F",
     "Х" to "H",
     "Ц" to "C",
-    "Ч" to "CH",
-    "Ш" to "SH",
-    "Щ" to "SH'",
+    "Ч" to "Ch",
+    "Ш" to "Sh",
+    "Щ" to "Sh'",
     "Ъ" to "",
     "Ы" to "I",
     "Ь" to "",
     "Э" to "E",
-    "Ю" to "YU",
-    "Я" to "YA"
+    "Ю" to "Yu",
+    "Я" to "Ya"
 )
 
 object Utils {
@@ -106,5 +108,19 @@ object Utils {
             .split("")
             .map { char -> if (TransliterationMap.containsKey(char)) TransliterationMap.getValue(char) else char }
             .joinToString("")
+    }
+
+    fun convertPxToDp(context: Context, px: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (px / scale + 0.5f).toInt()
+    }
+
+    fun convertDpToPx(context: Context, dp: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
+    }
+
+    fun convertSpToPx(context: Context, sp: Int): Int {
+        return sp * context.resources.displayMetrics.scaledDensity.toInt()
     }
 }

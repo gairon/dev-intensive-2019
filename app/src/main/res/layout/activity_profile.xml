@@ -19,7 +19,7 @@
             android:scaleType="centerCrop"
             android:contentDescription="TODO"/>
 
-    <ImageView
+    <ru.skillbranch.devintensive.ui.custom.CircleImageView
             android:layout_width="@dimen/avatar_round_size"
             android:layout_height="@dimen/avatar_round_size"
             app:srcCompat="@drawable/avatar_default"

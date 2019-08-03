@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="CircleImageView">
+        <attr name="cv_borderWidth" format="dimension"/>
+        <attr name="cv_borderColor" foкrmat="color"/>
+    </declare-styleable>
+</resources>
+ 
