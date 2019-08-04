@@ -4,6 +4,8 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -23,6 +25,7 @@ class ProfileActivity : AppCompatActivity() {
     var isEditMode = false
     private lateinit var viewModel: ProfileViewModel
     lateinit var viewFields: Map<String, TextView>
+    var isRepositoryValid = true;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +44,8 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-        viewModel.getProfileData().observe(this, Observer { updateUi(it)})
-        viewModel.getTheme().observe(this, Observer { updateTheme(it)})
+        viewModel.getProfileData().observe(this, Observer { updateUi(it) })
+        viewModel.getTheme().observe(this, Observer { updateTheme(it) })
     }
 
     private fun updateUi(profile: Profile) {
@@ -77,15 +80,57 @@ class ProfileActivity : AppCompatActivity() {
             showCurrentMode(isEditMode)
         }
 
-        btn_switch_theme.setOnClickListener{
+        btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
+        }
+
+        et_repository.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validateRepository(s.toString())
+            }
+        })
+
+        if (isEditMode) {
+            validateRepository(et_repository.text.toString())
         }
 
         showCurrentMode(isEditMode);
     }
 
+    private fun validateRepository(repository: String) {
+        isRepositoryValid = checkRepositoryValidity(repository)
+        if (!isRepositoryValid && isEditMode) {
+            wr_repository.error = "Невалидный адрес репозитория"
+            wr_repository.isErrorEnabled = true
+        } else {
+            wr_repository.error = null
+            wr_repository.isErrorEnabled = false
+        }
+    }
+
+    private fun checkRepositoryValidity(repository: String): Boolean {
+        if (repository == "") return true
+
+        val regExp: Regex = "^(https://)?(www\\.)?github\\.com/([\\da-zA-Z]+-?[\\da-zA-Z]+)/?$".toRegex()
+        val matches = regExp.find(repository)
+
+        val restrictedUrls = listOf("enterprise", "features", "topics", "collections", "trending", "events", "marketplace", "pricing", "nonprofit", "customer-stories", "security", "login", "join")
+        if (matches != null) {
+            val rest = matches.groupValues[3]
+            return !restrictedUrls.contains(rest)
+        } else {
+            return false
+        }
+    }
+
     private fun showCurrentMode(isEditMode: Boolean) {
-        val info = viewFields.filter{ setOf("firstName", "lastName", "about", "repository").contains(it.key) }
+        val info = viewFields.filter { setOf("firstName", "lastName", "about", "repository").contains(it.key) }
 
         for ((_, v) in info) {
             v as EditText
@@ -95,10 +140,15 @@ class ProfileActivity : AppCompatActivity() {
             v.background.alpha = if (isEditMode) 255 else 0
         }
 
+        if (!isEditMode) {
+            wr_repository.error = null
+            wr_repository.isErrorEnabled = false
+        }
+
         ic_eye.visibility = if (isEditMode) View.GONE else View.VISIBLE
         wr_about.isCounterEnabled = isEditMode
 
-        with (btn_edit) {
+        with(btn_edit) {
             val filter: ColorFilter? = if (isEditMode) {
                 PorterDuffColorFilter(
                     resources.getColor(R.color.color_accent, theme),
@@ -120,6 +170,10 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileInfo() {
+        if (!isRepositoryValid) {
+            et_repository.setText("")
+        }
+
         Profile(
             firstName = et_first_name.text.toString(),
             lastName = et_last_name.text.toString(),
